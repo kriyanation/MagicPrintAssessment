@@ -24,20 +24,23 @@ except configparser.NoSectionError:
     sys.exit()
 
 class MagicAssessmentPrint(tk.Frame):
-    def __init__(self,parent,*args,**kwargs):
+    def __init__(self,parent,lesson_id="",*args,**kwargs):
         super().__init__(parent, *args,**kwargs)
         Data_Capture.db = db
-        app = LessonList.MagicLessonList(bg='beige', fg='firebrick', buttonbg='firebrick', selectmode=tk.SINGLE,
+        if lesson_id == "" or lesson_id is None:
+            app = LessonList.MagicLessonList(bg='beige', fg='firebrick', buttonbg='firebrick', selectmode=tk.SINGLE,
                               buttonfg='snow',parent=self)
 
-        self.wait_window(app)
-        print(self.selected_lessons)
-        self.lesson_id = int(self.selected_lessons[0:self.selected_lessons.index(':')-1].strip())
+            self.wait_window(app)
+            print(self.selected_lessons)
+            self.lesson_id = int(self.selected_lessons[0:self.selected_lessons.index(':')-1].strip())
+        else:
+            self.lesson_id = lesson_id
 
 
-        self.assessment_paper_file = file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(self.lesson_id)+os.path.sep+"papers"+os.path.sep+"ip_"+str(self.lesson_id)+".pdf"
+        self.assessment_paper_file = file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(self.lesson_id)+os.path.sep+"ip_"+str(self.lesson_id)+".pdf"
         print(self.assessment_paper_file)
-        messagebox.showinfo("File Opened", "File is opened in another window. Adobe File Reader is required to view the file.\n Please save the file in your preferred location")
+        messagebox.showinfo("File Opened", "File will be opened in another window.\n\nAdobe File Reader is required to view the file.\n\nPlease save the file in your preferred location")
         try:
             if sys.platform == "win32":
                 os.startfile(self.assessment_paper_file )
