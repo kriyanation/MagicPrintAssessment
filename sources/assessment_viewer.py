@@ -11,17 +11,11 @@ from tkinter import messagebox
 from reportlab.pdfgen import canvas
 from pathlib import Path
 
-config = configparser.RawConfigParser()
-two_up = Path(__file__).parents[2]
-try:
-    config.read(str(two_up)+'/magic.cfg')
-    file_root = config.get("section1", 'file_root')
-    db = file_root+os.path.sep+'MagicRoom.db'
-    print(db)
 
-except configparser.NoSectionError:
-    messagebox.showerror("Configuration Error", "No Section found or Configuration File Missing")
-    sys.exit()
+file_root = os.path.abspath(os.path.join(os.getcwd(), ".."))
+db = file_root + os.path.sep + "MagicRoom.db"
+
+
 
 class MagicAssessmentPrint(tk.Frame):
     def __init__(self,parent,lesson_id="",*args,**kwargs):

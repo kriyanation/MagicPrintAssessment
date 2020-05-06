@@ -4,11 +4,7 @@ import sqlite3
 from tkinter import messagebox
 from pathlib import Path
 
-config = configparser.RawConfigParser()
-two_up = Path(__file__).absolute().parents[2]
-print(str(two_up)+'/magic.cfg')
-config.read(str(two_up)+'/magic.cfg')
-file_root = config.get("section1",'file_root')
+file_root = os.path.abspath(os.path.join(os.getcwd(),".."))
 db = file_root+os.path.sep+"MagicRoom.db"
 
 def get_Lessons():
