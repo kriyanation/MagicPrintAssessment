@@ -1,15 +1,13 @@
-import configparser
+
 import os
-import sqlite3
+
 import subprocess
 import sys
 import tkinter as tk
 
-import Data_Capture
-import LessonList
+import Data_Capture_Assess
+import lesson_list_assess
 from tkinter import messagebox
-from reportlab.pdfgen import canvas
-from pathlib import Path
 
 
 file_root = os.path.abspath(os.path.join(os.getcwd(), ".."))
@@ -17,13 +15,14 @@ db = file_root + os.path.sep + "MagicRoom.db"
 
 
 
-class MagicAssessmentPrint(tk.Frame):
+class MagicAssessmentPrint(tk.Toplevel):
     def __init__(self,parent,lesson_id="",*args,**kwargs):
         super().__init__(parent, *args,**kwargs)
-        Data_Capture.db = db
+        self.configure(background="gray16")
+        Data_Capture_Assess.db = db
         if lesson_id == "" or lesson_id is None:
-            app = LessonList.MagicLessonList(bg='beige', fg='firebrick', buttonbg='firebrick', selectmode=tk.SINGLE,
-                              buttonfg='snow',parent=self)
+            app = lesson_list_assess.MagicLessonList(bg='beige', fg='firebrick', buttonbg='firebrick', selectmode=tk.SINGLE,
+                                                     buttonfg='snow', parent=self)
 
             self.wait_window(app)
             print(self.selected_lessons)
@@ -45,13 +44,13 @@ class MagicAssessmentPrint(tk.Frame):
             messagebox.showerror("File open Error","File could not be opened. Check if you have Adobe Reader Installed or if the folder has full permissions")
 
 
-if __name__== "__main__":
-    dashboard_app = tk.Tk()
-    dashboard_app.configure(background="gray25")
-    dashboard_app.title("Learning Room Assessment")
-    dashboard_app.geometry("800x800")
-    frame = MagicAssessmentPrint(dashboard_app)
-    #dashboard_app.rowconfigure(0,weight=1)
-    dashboard_app.columnconfigure(0, weight=1)
-    frame.grid(row=0,column=0)
-    dashboard_app.mainloop()
+#if __name__== "__main__":
+    # dashboard_app = tk.Tk()
+    # dashboard_app.configure(background="gray25")
+    # dashboard_app.title("Learning Room Assessment")
+    # dashboard_app.geometry("800x800")
+    # frame = MagicAssessmentPrint(dashboard_app)
+    # #dashboard_app.rowconfigure(0,weight=1)
+    # dashboard_app.columnconfigure(0, weight=1)
+    # frame.grid(row=0,column=0)
+    # dashboard_app.mainloop()

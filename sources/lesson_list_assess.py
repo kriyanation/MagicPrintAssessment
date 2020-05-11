@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, Toplevel
-import Data_Capture
+import Data_Capture_Assess
 
 
 class MagicLessonList(Toplevel):
@@ -29,7 +29,7 @@ class MagicLessonList(Toplevel):
         self.lesson_button = ttk.Button(self, text="Select Lessons",
                                         style='Blue.TButton',command=self.select_lesson)
 
-        self.lesson_list = Data_Capture.get_Lessons()
+        self.lesson_list = Data_Capture_Assess.get_Lessons()
         for element in self.lesson_list:
             self.choice_list.insert(tk.END, str(element[0]) + ' : ' + element[1])
         self.choice_label.grid(row=0, column=0)
