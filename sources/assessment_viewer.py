@@ -42,7 +42,7 @@ class MagicAssessmentPrint(tk.Toplevel):
                 subprocess.call([opener, self.assessment_paper_file])
         except:
             messagebox.showerror("File open Error","File could not be opened. Check if you have Adobe Reader Installed or if the folder has full permissions")
-
+        self.destroy()
 
 #if __name__== "__main__":
     # dashboard_app = tk.Tk()
