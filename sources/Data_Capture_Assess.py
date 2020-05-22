@@ -21,4 +21,17 @@ def get_Lessons():
     connection.close()
     return list_lessons
 
+def get_Assessment_Text(lesson_id):
+    print (db)
+    connection = sqlite3.connect(db)
+    cur = connection.cursor()
+    sql = "select IP_Questions from Magic_Science_Lessons where Lesson_ID=?"
+    cur.execute(sql,(lesson_id,))
+    rows = cur.fetchall()
+    text = rows[0]
+    connection.commit()
+    connection.close()
+    return text[0]
+
+
 

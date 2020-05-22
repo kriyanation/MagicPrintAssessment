@@ -1,4 +1,4 @@
-
+import logging
 import os
 
 import subprocess
@@ -7,9 +7,14 @@ import tkinter as tk
 
 import Data_Capture_Assess
 import lesson_list_assess
-from tkinter import messagebox
+from tkinter import messagebox,ttk
+
+from gtts import gTTS
 
 
+
+
+logger = logging.getLogger("MagicLogger")
 file_root = os.path.abspath(os.path.join(os.getcwd(), ".."))
 db = file_root + os.path.sep + "MagicRoom.db"
 
@@ -18,7 +23,7 @@ db = file_root + os.path.sep + "MagicRoom.db"
 class MagicAssessmentPrint(tk.Toplevel):
     def __init__(self,parent,lesson_id="",*args,**kwargs):
         super().__init__(parent, *args,**kwargs)
-        self.configure(background="gray16")
+        self.configure(background="gray25")
         Data_Capture_Assess.db = db
         if lesson_id == "" or lesson_id is None:
             app = lesson_list_assess.MagicLessonList(bg='beige', fg='firebrick', buttonbg='firebrick', selectmode=tk.SINGLE,
@@ -29,20 +34,75 @@ class MagicAssessmentPrint(tk.Toplevel):
             self.lesson_id = int(self.selected_lessons[0:self.selected_lessons.index(':')-1].strip())
         else:
             self.lesson_id = lesson_id
+        self.assessment_labelframe = ttk.Labelframe(self,text="Generate Assessment",style="dash.TLabelframe")
 
+        self.assessment_PDF_label = ttk.Label(self.assessment_labelframe , text="View Assessment File",style="dash4header.Label")
+        self.assessment_PDF_Button = ttk.Button(self.assessment_labelframe ,text="Click to View", command=self.display_PDF,style="dash.TButton")
+        self.assessment_PDF_label.grid(row=0,column=0)
+        self.assessment_PDF_Button.grid(row=0,column=1)
+        assessment_text = Data_Capture_Assess.get_Assessment_Text(self.lesson_id)
+        assessment_file = file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(self.lesson_id)+os.path.sep+"audio_assessment_"+str(self.lesson_id)+".mp3"
+        self.audio_button = ttk.Button(self.assessment_labelframe , text="Generate Audio Assessment",
+                                       command=lambda: self.generate_assessment_audio(assessment_text, self.lesson_id),style="dash.TButton")
+        self.audio_label = ttk.Label(self.assessment_labelframe ,text="Generate Audio Assessment. (Requires Internet)",style="dash4header.Label")
+        self.audio_label.grid(row=1, column=0)
+        self.audio_button.grid(row=1, column=1)
+        if (os.path.exists(assessment_file)):
+                self.audio_play_label = ttk.Label(self.assessment_labelframe ,text="Existing Assessment Audio File",style="dash4header.Label")
+                self.audio_play_button = ttk.Button(self.assessment_labelframe , text="Play Existing Audio Assessment",
+                                        command=lambda: self.play_assessment_audio(self.lesson_id),style="dash.TButton")
+                self.audio_play_label.grid(row=2,column=0)
+                self.audio_play_button.grid(row=2, column=1)
+        self.assessment_labelframe.grid(row=0,column=0,padx=10,pady=10)
 
-        self.assessment_paper_file = file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(self.lesson_id)+os.path.sep+"ip_"+str(self.lesson_id)+".pdf"
+    def display_PDF(self):
+        self.assessment_paper_file = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
+            self.lesson_id) + os.path.sep + "ip_" + str(self.lesson_id) + ".pdf"
         print(self.assessment_paper_file)
-        messagebox.showinfo("File Opened", "File will be opened in another window.\n\nAdobe File Reader is required to view the file.\n\nPlease save the file in your preferred location")
+        messagebox.showinfo("File Opened",
+                            "File will be opened in another window.\n\nAdobe File Reader is required to view the file.\n\nPlease save the file in your preferred location",parent=self)
         try:
             if sys.platform == "win32":
-                os.startfile(self.assessment_paper_file )
+                os.startfile(self.assessment_paper_file)
             else:
                 opener = "open" if sys.platform == "darwin" else "xdg-open"
                 subprocess.call([opener, self.assessment_paper_file])
         except:
-            messagebox.showerror("File open Error","File could not be opened. Check if you have Adobe Reader Installed or if the folder has full permissions")
-        self.destroy()
+            messagebox.showerror("File open Error",
+                                 "File could not be opened. Check if you have Adobe Reader Installed or if the folder has full permissions")
+            logger.exception("File open error")
+
+    # self.destroy()
+
+    def generate_assessment_audio(self,text,lesson_id):
+        try:
+             audio_object = gTTS(text=text,lang="en",slow=False)
+             filepath = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(lesson_id) + os.path.sep + "audio_assessment_" + str(lesson_id) + ".mp3"
+             print(filepath)
+             audio_object.save(filepath)
+        except:
+            messagebox.showerror("Audio File Error", "Could not generate the audio file")
+            print("could not generate the audio file")
+            logger.exception("Could not generate the audio file")
+
+        if sys.platform == "win32":
+            os.startfile(file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(lesson_id)+os.path.sep+"audio_assessment_"+str(lesson_id)+".mp3")
+        else:
+            opener = "open" if sys.platform == "darwin" else "xdg-open"
+            subprocess.call([opener, file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(lesson_id)+os.path.sep+"audio_assessment_"+str(lesson_id)+".mp3"
+        ])
+
+    def play_assessment_audio(self, lesson_id):
+
+
+            if sys.platform == "win32":
+                os.startfile(file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
+                    lesson_id) + os.path.sep + "audio_assessment_" + str(lesson_id) + ".mp3")
+            else:
+                opener = "open" if sys.platform == "darwin" else "xdg-open"
+                subprocess.call([opener, file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(lesson_id)+os.path.sep+"audio_assessment_"+str(lesson_id)+".mp3"
+         ])
+
 
 #if __name__== "__main__":
     # dashboard_app = tk.Tk()
