@@ -25,49 +25,66 @@ db = file_root + os.path.sep + "MagicRoom.db"
 class MagicAssessmentPrint(tk.Toplevel):
     def __init__(self,parent,lesson_id="",*args,**kwargs):
         super().__init__(parent, *args,**kwargs)
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+        s = ttk.Style(self)
+        s.theme_use('clam')
+        s.configure('Red.TLabelframe', background="gray27")
+        s.configure('Red.TLabelframe.Label', font=('helvetica', 14, 'bold'))
+        s.configure('Red.TLabelframe.Label', foreground="white")
+        s.configure('Red.TLabelframe.Label', background="gray27")
+        s.configure('Blue.TButton', background="steelblue", foreground="white")
+        s.map('Blue.TButton', background=[('active', '!disabled', 'dark turquoise'), ('pressed', 'steelblue')],
+              foreground=[('pressed', "white"), ('active', "white")])
+        s.configure('TScrollbar', background="gray27", foreground="gray33")
+        s.map('TScrollbar', background=[('active', '!disabled', 'gray33'), ('pressed', 'gray27')],
+              foreground=[('pressed', "gray33"), ('active', "gray33")])
         self.configure(background="gray25")
         Data_Capture_Assess.db = db
         if lesson_id == "" or lesson_id is None:
-            app = lesson_list_assess.MagicLessonList(bg='beige', fg='firebrick', buttonbg='firebrick', selectmode=tk.SINGLE,
-                                                     buttonfg='snow', parent=self)
-
+            app = lesson_list_assess.MagicLessonList(parent=self)
+            app.geometry("390x700+20+20")
             self.wait_window(app)
             print(self.selected_lessons)
-            self.lesson_id = int(self.selected_lessons[0:self.selected_lessons.index(':')-1].strip())
+            self.lesson_id = self.selected_lessons[0]
         else:
             self.lesson_id = lesson_id
-        self.assessment_labelframe = ttk.Labelframe(self,text="Generate Assessment",style="dash.TLabelframe")
+        self.assessment_labelframe = ttk.Labelframe(self,text="Generate Assessment",style="Red.TLabelframe")
 
-        self.assessment_PDF_label = ttk.Label(self.assessment_labelframe , text="View Assessment File",style="dash4header.Label")
-        self.assessment_PDF_Button = ttk.Button(self.assessment_labelframe ,text="Click to View", command=self.display_PDF,style="dash.TButton")
-        self.assessment_PDF_label.grid(row=0,column=0)
+        self.assessment_PDF_label = ttk.Label(self.assessment_labelframe , text="View Assessment File",style="Red.TLabelframe.Label")
+        self.assessment_PDF_Button = ttk.Button(self.assessment_labelframe ,text="View", command=self.display_PDF,style="Blue.TButton")
+        self.assessment_PDF_label.grid(row=0,column=0,padx=5,sticky=tk.W)
         self.assessment_PDF_Button.grid(row=0,column=1)
         assessment_text = Data_Capture_Assess.get_Assessment_Text(self.lesson_id)
         assessment_file = file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(self.lesson_id)+os.path.sep+"audio_assessment_"+str(self.lesson_id)+".mp3"
-        self.audio_button = ttk.Button(self.assessment_labelframe , text="Generate Audio Assessment",
-                                       command=lambda: self.generate_assessment_audio(assessment_text, self.lesson_id),style="dash.TButton")
-        self.audio_label = ttk.Label(self.assessment_labelframe ,text="Generate Audio Assessment. (Requires Internet)",style="dash4header.Label")
-        self.audio_label.grid(row=1, column=0)
-        self.audio_button.grid(row=1, column=1)
+        self.audio_button = ttk.Button(self.assessment_labelframe , text="Generate",
+                                       command=lambda: self.generate_assessment_audio(assessment_text, self.lesson_id),style="Blue.TButton")
+        self.audio_label = ttk.Label(self.assessment_labelframe ,text="Generate Audio Assessment",style="Red.TLabelframe.Label")
+        self.audio_label.grid(row=1, padx=5,column=0,sticky=tk.W)
+        self.audio_button.grid(row=1,padx=5, column=1)
         if (os.path.exists(assessment_file)):
-                self.audio_play_label = ttk.Label(self.assessment_labelframe ,text="Existing Assessment Audio File",style="dash4header.Label")
-                self.audio_play_button = ttk.Button(self.assessment_labelframe , text="Play Existing Audio Assessment",
-                                        command=lambda: self.play_assessment_audio(self.lesson_id),style="dash.TButton")
-                self.audio_play_label.grid(row=2,column=0)
-                self.audio_play_button.grid(row=2, column=1)
+                self.audio_play_label = ttk.Label(self.assessment_labelframe ,text="Play Existing Assessment Audio",style="Red.TLabelframe.Label")
+                self.audio_play_button = ttk.Button(self.assessment_labelframe , text="Play",
+                                        command=lambda: self.play_assessment_audio(self.lesson_id),style="Blue.TButton")
+                self.audio_play_label.grid(padx=5,row=2,column=0,sticky=tk.W)
+                self.audio_play_button.grid(row=2,padx=5, column=1)
         self.assessment_labelframe.grid(row=0,column=0,padx=10,pady=10)
 
         self.save_audio_button = ttk.Button(self.assessment_labelframe, text="Save",
                                    command=lambda: self.save_assessment_audio(assessment_file, self.lesson_id),
-                                   style="dash.TButton")
+                                   style="Blue.TButton")
         assessment_paper_file = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
             self.lesson_id) + os.path.sep + "ip_" + str(self.lesson_id) + ".pdf"
         self.save_file_button = ttk.Button(self.assessment_labelframe, text="Save",
                                    command=lambda: self.save_assessment_file(assessment_paper_file, self.lesson_id),
-                                   style="dash.TButton")
+                                   style="Blue.TButton")
+        self.notes_condition_label = ttk.Label(self, text="Audio assessment generation requires internet connectivity"
+                                               , background="gray27", foreground="aquamarine",
+                                               font=("helvetica", 10, "bold"))
 
-        self.save_file_button.grid(row=0,column=2)
-        self.save_audio_button.grid(row=1, column=2)
+        self.save_file_button.grid(row=0,column=2,padx=5,pady=8)
+        self.save_audio_button.grid(row=1, column=2,padx=5,pady=8)
+        self.notes_condition_label.grid(row=2, column=0)
 
 
     def display_PDF(self):
