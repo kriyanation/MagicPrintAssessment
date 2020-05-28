@@ -12,6 +12,7 @@ import lesson_list_assess
 from tkinter import messagebox, ttk, filedialog
 
 from gtts import gTTS
+import threading
 
 
 
@@ -107,15 +108,10 @@ class MagicAssessmentPrint(tk.Toplevel):
     # self.destroy()
 
     def generate_assessment_audio(self,text,lesson_id):
-        try:
-             audio_object = gTTS(text=text,lang="en",slow=False)
-             filepath = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(lesson_id) + os.path.sep + "audio_assessment_" + str(lesson_id) + ".mp3"
-             print(filepath)
-             audio_object.save(filepath)
-        except:
-            messagebox.showerror("Audio File Error", "Could not generate the audio file")
-            print("could not generate the audio file")
-            logger.exception("Could not generate the audio file")
+        start_audio = threading.Thread(target=self.generate_audio,args=(lesson_id,text))
+        start_audio.start()
+        messagebox.showinfo("Staus", "Online audio generation triggered.\n Player will start once generation is complete")
+        start_audio.join(20)
 
         if sys.platform == "win32":
             os.startfile(file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(lesson_id)+os.path.sep+"audio_assessment_"+str(lesson_id)+".mp3")
@@ -123,6 +119,18 @@ class MagicAssessmentPrint(tk.Toplevel):
             opener = "open" if sys.platform == "darwin" else "xdg-open"
             subprocess.call([opener, file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(lesson_id)+os.path.sep+"audio_assessment_"+str(lesson_id)+".mp3"
         ])
+
+    def generate_audio(self, lesson_id, text):
+        try:
+            audio_object = gTTS(text=text, lang="en", slow=False)
+            filepath = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
+                lesson_id) + os.path.sep + "audio_assessment_" + str(lesson_id) + ".mp3"
+            print(filepath)
+            audio_object.save(filepath)
+        except:
+            messagebox.showerror("Audio File Error", "Could not generate the audio file")
+            print("could not generate the audio file")
+            logger.exception("Could not generate the audio file")
 
     def play_assessment_audio(self, lesson_id):
 
