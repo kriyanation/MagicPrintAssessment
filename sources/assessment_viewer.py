@@ -1,13 +1,15 @@
 import logging
 import os
+import shutil
 
 import subprocess
 import sys
 import tkinter as tk
+import traceback
 
 import Data_Capture_Assess
 import lesson_list_assess
-from tkinter import messagebox,ttk
+from tkinter import messagebox, ttk, filedialog
 
 from gtts import gTTS
 
@@ -54,6 +56,19 @@ class MagicAssessmentPrint(tk.Toplevel):
                 self.audio_play_label.grid(row=2,column=0)
                 self.audio_play_button.grid(row=2, column=1)
         self.assessment_labelframe.grid(row=0,column=0,padx=10,pady=10)
+
+        self.save_audio_button = ttk.Button(self.assessment_labelframe, text="Save",
+                                   command=lambda: self.save_assessment_audio(assessment_file, self.lesson_id),
+                                   style="dash.TButton")
+        assessment_paper_file = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
+            self.lesson_id) + os.path.sep + "ip_" + str(self.lesson_id) + ".pdf"
+        self.save_file_button = ttk.Button(self.assessment_labelframe, text="Save",
+                                   command=lambda: self.save_assessment_file(assessment_paper_file, self.lesson_id),
+                                   style="dash.TButton")
+
+        self.save_file_button.grid(row=0,column=2)
+        self.save_audio_button.grid(row=1, column=2)
+
 
     def display_PDF(self):
         self.assessment_paper_file = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
@@ -102,6 +117,22 @@ class MagicAssessmentPrint(tk.Toplevel):
                 opener = "open" if sys.platform == "darwin" else "xdg-open"
                 subprocess.call([opener, file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(lesson_id)+os.path.sep+"audio_assessment_"+str(lesson_id)+".mp3"
          ])
+
+    def save_assessment_audio(self, assessment_file, lesson_id):
+        try:
+            filename = filedialog.askdirectory()
+            shutil.copyfile(assessment_file,filename+os.path.sep+"assessment"+str(lesson_id)+".mp3")
+        except:
+            messagebox.showwarning("File Save Error","File could not be copied",parent=self)
+            print(traceback.print_exc())
+
+    def save_assessment_file(self, assessment_file, lesson_id):
+        try:
+            filename = filedialog.askdirectory()
+            shutil.copyfile(assessment_file,filename+os.path.sep+"assessment"+str(lesson_id)+".pdf")
+        except:
+            messagebox.showwarning("File Save Error","File could not be copied",parent=self)
+            print(traceback.print_exc())
 
 
 #if __name__== "__main__":
