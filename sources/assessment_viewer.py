@@ -44,7 +44,7 @@ class MagicAssessmentPrint(tk.Toplevel):
         Data_Capture_Assess.db = db
         if lesson_id == "" or lesson_id is None:
             app = lesson_list_assess.MagicLessonList(parent=self)
-            app.geometry("390x700+20+20")
+            app.geometry("340x700+20+20")
             self.wait_window(app)
             print(self.selected_lessons)
             self.lesson_id = self.selected_lessons[0]
