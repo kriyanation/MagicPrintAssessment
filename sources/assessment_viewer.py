@@ -110,7 +110,7 @@ class MagicAssessmentPrint(tk.Toplevel):
     def generate_assessment_audio(self,text,lesson_id):
         start_audio = threading.Thread(target=self.generate_audio,args=(lesson_id,text))
         start_audio.start()
-        messagebox.showinfo("Staus", "Online audio generation triggered.\n Player will start once generation is complete")
+        messagebox.showinfo("Staus", "Online audio generation triggered.\n Player will start once generation is complete",parent=self)
         start_audio.join(20)
 
         if sys.platform == "win32":
@@ -128,36 +128,40 @@ class MagicAssessmentPrint(tk.Toplevel):
             print(filepath)
             audio_object.save(filepath)
         except:
-            messagebox.showerror("Audio File Error", "Could not generate the audio file")
+            messagebox.showerror("Audio File Error", "Could not generate the audio file",parent=self)
             print("could not generate the audio file")
             logger.exception("Could not generate the audio file")
 
     def play_assessment_audio(self, lesson_id):
 
-
+         try:
             if sys.platform == "win32":
                 os.startfile(file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
                     lesson_id) + os.path.sep + "audio_assessment_" + str(lesson_id) + ".mp3")
             else:
                 opener = "open" if sys.platform == "darwin" else "xdg-open"
                 subprocess.call([opener, file_root+os.path.sep+"Lessons"+os.path.sep+"Lesson"+str(lesson_id)+os.path.sep+"audio_assessment_"+str(lesson_id)+".mp3"
-         ])
-
+             ])
+         except:
+               messagebox.showwarning("File Play Error","File could not be played",parent=self)
+               logger.exception("Could not play the audio file")
     def save_assessment_audio(self, assessment_file, lesson_id):
         try:
-            filename = filedialog.askdirectory()
+            filename = filedialog.askdirectory(parent=self)
             shutil.copyfile(assessment_file,filename+os.path.sep+"assessment"+str(lesson_id)+".mp3")
+            messagebox.showinfo("File Copy","File copied",parent=self)
         except:
             messagebox.showwarning("File Save Error","File could not be copied",parent=self)
-            print(traceback.print_exc())
+            logger.exception("Could not copy the file")
 
     def save_assessment_file(self, assessment_file, lesson_id):
         try:
-            filename = filedialog.askdirectory()
+            filename = filedialog.askdirectory(parent=self)
             shutil.copyfile(assessment_file,filename+os.path.sep+"assessment"+str(lesson_id)+".pdf")
+            messagebox.showinfo("File Copy","File copied",parent=self)
         except:
             messagebox.showwarning("File Save Error","File could not be copied",parent=self)
-            print(traceback.print_exc())
+            logger.exception("Could not copy the file")
 
 
 #if __name__== "__main__":
