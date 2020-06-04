@@ -30,22 +30,24 @@ class MagicAssessmentPrint(tk.Toplevel):
         self.columnconfigure(0, weight=1)
         s = ttk.Style(self)
         s.theme_use('clam')
-        s.configure('Red.TLabelframe', background="gray27")
+        s.configure('Red.TLabelframe', background="gray22")
         s.configure('Red.TLabelframe.Label', font=('helvetica', 14, 'bold'))
         s.configure('Red.TLabelframe.Label', foreground="white")
-        s.configure('Red.TLabelframe.Label', background="gray27")
+        s.configure('Red.TLabelframe.Label', background="gray22")
         s.configure('Blue.TButton', background="steelblue", foreground="white")
         s.map('Blue.TButton', background=[('active', '!disabled', 'dark turquoise'), ('pressed', 'steelblue')],
               foreground=[('pressed', "white"), ('active', "white")])
-        s.configure('TScrollbar', background="gray27", foreground="gray33")
-        s.map('TScrollbar', background=[('active', '!disabled', 'gray33'), ('pressed', 'gray27')],
+        s.configure('TScrollbar', background="gray22", foreground="gray33")
+        s.map('TScrollbar', background=[('active', '!disabled', 'gray33'), ('pressed', 'gray22')],
               foreground=[('pressed', "gray33"), ('active', "gray33")])
-        self.configure(background="gray25")
+        self.configure(background="gray20")
         Data_Capture_Assess.db = db
         if lesson_id == "" or lesson_id is None:
             app = lesson_list_assess.MagicLessonList(parent=self)
             app.geometry("340x700+20+20")
             self.wait_window(app)
+            if hasattr(self,"selected_lessons") is False:
+                self.destroy()
             print(self.selected_lessons)
             self.lesson_id = self.selected_lessons[0]
         else:
@@ -80,7 +82,7 @@ class MagicAssessmentPrint(tk.Toplevel):
                                    command=lambda: self.save_assessment_file(assessment_paper_file, self.lesson_id),
                                    style="Blue.TButton")
         self.notes_condition_label = ttk.Label(self, text="Audio assessment generation requires internet connectivity"
-                                               , background="gray27", foreground="aquamarine",
+                                               , background="gray22", foreground="aquamarine",
                                                font=("helvetica", 10, "bold"))
 
         self.save_file_button.grid(row=0,column=2,padx=5,pady=8)
@@ -122,6 +124,7 @@ class MagicAssessmentPrint(tk.Toplevel):
 
     def generate_audio(self, lesson_id, text):
         try:
+            text = "Assessments or Notes."+text
             audio_object = gTTS(text=text, lang="en", slow=False)
             filepath = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
                 lesson_id) + os.path.sep + "audio_assessment_" + str(lesson_id) + ".mp3"
