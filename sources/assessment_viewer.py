@@ -100,8 +100,7 @@ class MagicAssessmentPrint(tk.Toplevel):
             if sys.platform == "win32":
                 os.startfile(self.assessment_paper_file)
             else:
-                opener = "open" if sys.platform == "darwin" else "xdg-open"
-                subprocess.call([opener, self.assessment_paper_file])
+                os.system("xpdf " + self.assessment_paper_file)
         except:
             messagebox.showerror("File open Error",
                                  "File could not be opened. Check if you have Adobe Reader Installed or if the folder has full permissions")
