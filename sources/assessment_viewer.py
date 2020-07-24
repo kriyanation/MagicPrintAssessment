@@ -44,7 +44,7 @@ class MagicAssessmentPrint(tk.Toplevel):
         Data_Capture_Assess.db = db
         if lesson_id == "" or lesson_id is None:
             app = lesson_list_assess.MagicLessonList(parent=self)
-            app.geometry("340x700+20+20")
+            app.geometry("340x800+20+20")
             self.wait_window(app)
             if hasattr(self,"selected_lessons") is False:
                 self.destroy()
