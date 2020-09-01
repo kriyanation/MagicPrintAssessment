@@ -8,6 +8,7 @@ import tkinter as tk
 import traceback
 
 import Data_Capture_Assess
+import assessment_generate
 import lesson_list_assess
 from tkinter import messagebox, ttk, filedialog
 
@@ -93,6 +94,8 @@ class MagicAssessmentPrint(tk.Toplevel):
     def display_PDF(self):
         self.assessment_paper_file = file_root + os.path.sep + "Lessons" + os.path.sep + "Lesson" + str(
             self.lesson_id) + os.path.sep + "ip_" + str(self.lesson_id) + ".pdf"
+        assessment_generate.generate_ip_paper(self.lesson_id,self.assessment_paper_file,db)
+
         print(self.assessment_paper_file)
         messagebox.showinfo("File Opened",
                             "File will be opened in another window.\n\nAdobe File Reader is required to view the file.\n\nPlease save the file in your preferred location",parent=self)
